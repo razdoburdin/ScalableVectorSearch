@@ -38,22 +38,49 @@ jobs:
         cxx: [g++-11, g++-12, clang++-15]
         include:
           - cxx: g++-11
-            cc: gcc-11
+            package: gcc@11
+            cc_name: gcc-11
+            cxx_name: g++-11
+            needs_prefix: false
           - cxx: g++-12
-            cc: gcc-12
+            package: gcc@12
+            cc_name: gcc-12
+            cxx_name: g++-12
+            needs_prefix: false
           - cxx: clang++-15
-            cc: clang-15
+            package: llvm@15
+            cc_name: clang
+            cxx_name: clang++
+            needs_prefix: true
 
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Compiler
+      run: |
+        echo "Installing ${{ matrix.package }}..."
+        brew install ${{ matrix.package }}
+
     - name: Configure build
       working-directory: ${{ runner.temp }}
-      env:
-        CXX: ${{ matrix.cxx }}
-        CC: ${{ matrix.cc }}
-        TEMP_WORKSPACE: ${{ runner.temp }}
+      # env:
+      #   CXX: ${{ matrix.cxx }}
+      #   CC: ${{ matrix.cc }}
+      TEMP_WORKSPACE: ${{ runner.temp }}
       run: |
+        # Determine the correct compiler paths
+        if [[ "${{ matrix.needs_prefix }}" == "true" ]]; then
+          # For non-default packages like llvm@15, get the install prefix
+          COMPILER_PREFIX=$(brew --prefix ${{ matrix.package }})
+          export CC="${COMPILER_PREFIX}/bin/${{ matrix.cc_name }}"
+          export CXX="${COMPILER_PREFIX}/bin/${{ matrix.cxx_name }}"
+        else
+          # For versioned GCC installs, the name is usually directly available
+          export CC="${{ matrix.cc_name }}"
+          export CXX="${{ matrix.cxx_name }}"
+        fi
+
+        # Run CMake
         cmake -B${TEMP_WORKSPACE}/build -S${GITHUB_WORKSPACE} \
               -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -DSVS_BUILD_BINARIES=YES \
