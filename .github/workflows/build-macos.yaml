@@ -63,12 +63,7 @@ jobs:
 
     - name: Configure build
       working-directory: ${{ runner.temp }}
-      # env:
-      #   CXX: ${{ matrix.cxx }}
-      #   CC: ${{ matrix.cc }}
-      TEMP_WORKSPACE: ${{ runner.temp }}
       run: |
-        # Determine the correct compiler paths
         if [[ "${{ matrix.needs_prefix }}" == "true" ]]; then
           # For non-default packages like llvm@15, get the install prefix
           COMPILER_PREFIX=$(brew --prefix ${{ matrix.package }})
@@ -80,7 +75,6 @@ jobs:
           export CXX="${{ matrix.cxx_name }}"
         fi
 
-        # Run CMake
         cmake -B${TEMP_WORKSPACE}/build -S${GITHUB_WORKSPACE} \
               -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -DSVS_BUILD_BINARIES=YES \
