@@ -87,7 +87,7 @@ jobs:
 
     - name: Build Tests and Utilities
       working-directory: ${{ runner.temp }}/build
-      run: make -j$(nproc)
+      run: make -j$(sysctl -n hw.ncpu)
 
     - name: Run tests
       env:
