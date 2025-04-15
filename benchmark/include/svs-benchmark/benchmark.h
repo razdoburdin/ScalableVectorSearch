@@ -115,7 +115,19 @@ class SaveDirectoryChecker {
     ~SaveDirectoryChecker() = default;
 
   private:
-    std::unordered_set<std::filesystem::path> directories_{};
+    #if defined(__APPLE__) && defined(_LIBCPP_VERSION)
+        // Custom hash for macOS with libc++
+        struct PathHash {
+            std::size_t operator()(const std::filesystem::path& p) const {
+               return std::hash<std::string>{}(p.string());
+            }
+        };
+        using PathSet = std::unordered_set<std::filesystem::path, PathHash>;
+    #else
+        using PathSet = std::unordered_set<std::filesystem::path>;
+    #endif
+
+    PathSet directories_{};
 };
 
 // Place-holder to indicate no extra arguments need forwarding to inner calls.
