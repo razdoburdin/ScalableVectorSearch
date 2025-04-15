@@ -207,7 +207,7 @@ CATCH_TEST_CASE("Thread Helper Types", "[core][threads]") {
         }
 
         CATCH_SECTION("Indexing") {
-            auto range = svs::threads::UnitRange<size_t>(100, 200);
+            auto range = svs::threads::UnitRange<int>(100, 200);
             CATCH_REQUIRE(range.front() == 100);
             CATCH_REQUIRE(range.back() == 199);
             for (size_t i = 0; i < range.size(); ++i) {
