@@ -63,6 +63,8 @@ jobs:
 
     - name: Configure build
       working-directory: ${{ runner.temp }}
+      env:
+        TEMP_WORKSPACE: ${{ runner.temp }}
       run: |
         if [[ "${{ matrix.needs_prefix }}" == "true" ]]; then
           # For non-default packages like llvm@15, get the install prefix
