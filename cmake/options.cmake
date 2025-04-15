@@ -146,7 +146,12 @@ endif()
 
 add_library(svs_native_options INTERFACE)
 add_library(svs::native_options ALIAS svs_native_options)
-target_compile_options(svs_native_options INTERFACE -march=native -mtune=native)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(STATUS "Using generic ARM optimization flags (-march=armv8.2-a) for GCC on macOS.")
+    target_compile_options(svs_native_options INTERFACE -march=armv8.2-a -mtune=native)
+else()
+    target_compile_options(svs_native_options INTERFACE -march=native -mtune=native)
+endif()
 
 # Use an internal INTERFACE target to apply the same build options to both the
 # unit test and the compiled binaries.
