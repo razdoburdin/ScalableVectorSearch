@@ -56,8 +56,6 @@ void busy_sleep(std::chrono::nanoseconds duration) {
 
 } // namespace
 
-
-
 CATCH_TEST_CASE("Timing", "[lib][timing]") {
     CATCH_SECTION("TimeData") {
         auto x = svs::lib::TimeData();
