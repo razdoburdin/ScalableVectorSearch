@@ -67,6 +67,7 @@ CATCH_TEST_CASE("Timing", "[lib][timing]") {
         {
             auto x = timer.push_back("a");
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            x.finish();
         }
         {
             auto x = timer.push_back("b");
